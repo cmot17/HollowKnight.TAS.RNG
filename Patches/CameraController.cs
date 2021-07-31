@@ -1,4 +1,4 @@
-﻿using Assembly_CSharp.TasInfo.mm.Source;
+using Assembly_CSharp.TasInfo.mm.Source;
 
 // ReSharper disable All
 public class patch_CameraController : CameraController {

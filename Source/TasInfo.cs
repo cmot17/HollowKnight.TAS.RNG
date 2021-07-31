@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using UnityEngine;
 
@@ -23,7 +23,7 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
             StringBuilder infoBuilder = new();
 
             try {
-                DesyncChecker.BeforeUpdate();
+                //DesyncChecker.BeforeUpdate();
                 if (!init) {
                     init = true;
                     OnInit(gameManager);
@@ -31,7 +31,7 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
 
                 OnPreRender(gameManager, infoBuilder);
 
-                DesyncChecker.AfterUpdate(infoBuilder);
+                //DesyncChecker.AfterUpdate(infoBuilder);
             } catch (Exception e) {
                 Debug.LogException(e);
             }
