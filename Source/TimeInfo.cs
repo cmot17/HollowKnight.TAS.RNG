@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
@@ -43,8 +43,7 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
             string nextScene = gameManager.nextSceneName;
             GameState gameState = gameManager.gameState;
 
-            if (!timeStart && (nextScene.Equals("Tutorial_01", StringComparison.OrdinalIgnoreCase) && gameState == GameState.ENTERING_LEVEL ||
-                               nextScene is "GG_Vengefly_V" or "GG_Boss_Door_Entrance" or "GG_Entrance_Cutscene")) {
+            if (!timeStart && gameState == GameState.ENTERING_LEVEL) {
                 timeStart = true;
             }
 
