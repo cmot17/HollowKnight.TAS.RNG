@@ -84,6 +84,7 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
             EnemyInfo.OnPreRender(gameManager, infoBuilder);
             HitboxInfo.OnPreRender(gameManager, infoBuilder);
             RngInfo.OnPreRender(infoBuilder);
+            RNGManager.OnPreRender(infoBuilder);
         }
     }
 }
