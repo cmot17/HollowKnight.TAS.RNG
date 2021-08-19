@@ -1,7 +1,7 @@
 using System.Text;
 using UnityEngine;
 using System.Reflection;
-using Assembly_CSharp.TasInfo.mm.Source.Extensions;
+using Assembly_CSharp.TasInfo.mm.Source.Utils;
 
 namespace Assembly_CSharp.TasInfo.mm.Source {
     public static class RngInfo {
@@ -32,10 +32,12 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
             Random.state = origState;
 
             if (ConfigManager.ShowRngState) {
-                infoBuilder.AppendLine($"S0: {typeof(Random.State).GetField("s0", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Random.state)}");
-                infoBuilder.AppendLine($"S1: {typeof(Random.State).GetField("s1", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Random.state)}");
-                infoBuilder.AppendLine($"S2: {typeof(Random.State).GetField("s2", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Random.state)}");
-                infoBuilder.AppendLine($"S3: {typeof(Random.State).GetField("s3", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Random.state)}");
+                //Random.State st = Random.state;
+                RNGManager.PublicState currentState = RNGManager.Reinterpret(Random.state);
+                infoBuilder.AppendLine($"S0: {currentState.s0}");
+                infoBuilder.AppendLine($"S1: {currentState.s1}");
+                infoBuilder.AppendLine($"S2: {currentState.s2}");
+                infoBuilder.AppendLine($"S3: {currentState.s3}");
             }
         }
 
