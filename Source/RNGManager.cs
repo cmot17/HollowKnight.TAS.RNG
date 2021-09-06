@@ -7,6 +7,7 @@ using System.Reflection;
 using Assembly_CSharp.TasInfo.mm.Source.Utils;
 using System.Runtime.CompilerServices;
 
+
 namespace Assembly_CSharp.TasInfo.mm.Source {
     public static class RNGManager {
         public static List<string[]> SavedTransitions = new();
@@ -18,6 +19,11 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
         public static string LastScene = "";
 
         public static string InfoOut = "";
+        public static string GeneratorOut = "";
+        public static string LastSceneOut = "";
+        public static string NewSceneOut = "";
+        public static string TransitionCountOut = "";
+        public static bool SaveData = false;
 
         public struct PublicState {
             [SerializeField]
@@ -43,8 +49,9 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
         }
 
         public static void OnInit() {
-            if (File.Exists(Application.persistentDataPath + "/rng_state.csv")) {
-                string[] fileData = File.ReadAllLines(Application.persistentDataPath + "/rng_state.csv");
+            var path = Path.GetDirectoryName(Application.dataPath) + "/tas_rng.csv";
+            if (File.Exists(path)) {
+                string[] fileData = File.ReadAllLines(path);
                 foreach (string line in fileData) {
                     SavedTransitions.Add(line.Split(','));
                 }
@@ -96,18 +103,36 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
                     lineString += ",";
                 }
                 lineString += line[line.Length - 1];
-                lineString += Environment.NewLine;
                 tempFile.Add(lineString);
             }
 
 
-            File.WriteAllLines(Application.persistentDataPath + "/rng_state.csv", tempFile.ToArray());
+            LastSceneOut = $"LastScene={LastScene}";
+            NewSceneOut = $"NewScene={gameManager.sceneName}";
+            GeneratorOut = $"GeneratorState={currentState.s0.ToString()},{currentState.s1.ToString()},{currentState.s2.ToString()},{currentState.s3.ToString()}";
+            TransitionCountOut = $"TransitionCount={TransitionNum}";
+            SaveData = true;
+
+            //File.WriteAllLines(Application.persistentDataPath + "/rng_state.csv", tempFile.ToArray());
 
             LastScene = gameManager.sceneName;
         }
 
         public static void OnPreRender(StringBuilder infoBuilder) {
             infoBuilder.Append(InfoOut);
+            infoBuilder.Append(LastSceneOut);
+            infoBuilder.Append(NewSceneOut);
+            infoBuilder.Append(GeneratorOut);
+            infoBuilder.Append(TransitionCountOut);
+            if (SaveData) {
+                infoBuilder.Append("SaveData=1");
+            } 
+            else
+            {
+                infoBuilder.Append("SaveData=0");
+            }
+
+            SaveData = false;
         }
     }
 }

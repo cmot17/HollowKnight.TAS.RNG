@@ -1,10 +1,12 @@
 local gameVersion
 local markAddresses = {
-    v1028 = { 0x400000 + 0x1B1CF60, 0x400, 0x18, 0x20, 0xF78 },
-    v1221 = { 0x400000 + 0x1B1CF60, 0x400, 0x18, 0x20, 0xF38 },
-    v1432_mod = { 0x400000 + 0x2121D18, 0x0, 0x40, 0x4A0, 0x48, 0xA0, 0x68 },
-    v1432 = { 0x400000 + 0x2115D28, 0x28, 0xB8, 0x10, 0x60, 0x238, 0xF48 }
+    v1028 = {0x400000 + 0x1B1CF60, 0x400, 0x18, 0x20, 0xF78},
+    v1221 = {0x400000 + 0x1B1CF60, 0x400, 0x18, 0x20, 0xF38},
+    v1432_mod = {0x400000 + 0x2121D18, 0x0, 0x40, 0x4A0, 0x48, 0xA0, 0x68},
+    v1432 = {0x400000 + 0x2115D28, 0x28, 0xB8, 0x10, 0x60, 0x238, 0xF48}
 }
+
+local lastSaveData = false
 
 function onPaint()
     local infoAddress = getInfoAddress()
@@ -15,8 +17,15 @@ function onPaint()
 
     local infoText = readString(infoAddress)
     local gameInfo = {}
-    for line in infoText:gmatch("[^\r\n]+") do
-        if line:find("^Enemy=") ~= nil then
+
+    local generatorState
+    local lastScene
+    local newScene
+    local transitionCount
+    local saveData = false
+
+    for line in infoText:gmatch("[^\r\n]+") do -- splits up infoText by newline characters (^ matches anything but \r and \n here)
+        if line:find("^Enemy=") ~= nil then -- ^ matches to the start of the string here
             local hpData = splitString(line:sub(7), "|")
             for i = 1, #hpData, 3 do
                 gui.text(hpData[i], hpData[i + 1], hpData[i + 2])
@@ -31,12 +40,50 @@ function onPaint()
             for i = 1, #hitboxData, 4 do
                 gui.ellipse(hitboxData[i], hitboxData[i + 1], hitboxData[i + 2], hitboxData[i + 2], hitboxData[i + 3])
             end
+        elseif line:find("^GeneratorState=") ~= nil then
+            generatorState = splitString(line:sub(16), ",")
+        elseif line:find("^LastScene=") ~= nil then
+            lastScene = line:sub(11)
+        elseif line:find("^NewScene=") ~= nil then
+            newScene = line:sub(10)
+        elseif line:find("^TransitionCount=") ~= nil then
+            transitionCount = tonumber(line:sub(17))
+        elseif line:find("^SaveData=") ~= nil then
+            if line:sub(10) == "1" then
+                saveData = true
+            else
+                saveData = false
+            end
+        elseif line:find("^SaveData=") == nil then
+            saveData = false
         else
             table.insert(gameInfo, line)
         end
     end
 
+    if not lastSaveData and saveData then
+        local oldFile
+
+        local rngFile = io.open("tas_rng.csv", "r")
+        if rngFile ~= nil then
+            oldFile = rngFile:read("a")
+        else
+            oldFile = ""
+        end
+
+        rngFile:close()
+        rngFile = io.open("tas_rng.csv", "w+")
+
+        local newFile = splitLines(oldFile)
+        newFile[transitionCount] = "" .. lastScene .. "," .. newScene .. "," .. generatorState[1] .. "," ..
+                                       generatorState[2] .. "," .. generatorState[3] .. "," .. generatorState[4]
+        for i = 1,table.getn(newFile) do
+            rngFile:write(newFile[i], "\n")
+        end
+    end
+
     drawGameInfo(gameInfo)
+    lastSaveData = saveData
 end
 
 function drawGameInfo(textArray)
@@ -61,6 +108,14 @@ function splitString(text, sep)
     end
     local t = {}
     for str in string.gmatch(text, "([^" .. sep .. "]+)") do
+        table.insert(t, str)
+    end
+    return t
+end
+
+function splitLines(text)
+    local t = {}
+    for str in string.gmatch(text, "[^\r\n]+") do
         table.insert(t, str)
     end
     return t
