@@ -24,6 +24,8 @@ function onPaint()
     local transitionCount
     local saveData = false
 
+    print("in onPaint")
+
     for line in infoText:gmatch("[^\r\n]+") do -- splits up infoText by newline characters (^ matches anything but \r and \n here)
         if line:find("^Enemy=") ~= nil then -- ^ matches to the start of the string here
             local hpData = splitString(line:sub(7), "|")
@@ -49,35 +51,40 @@ function onPaint()
         elseif line:find("^TransitionCount=") ~= nil then
             transitionCount = tonumber(line:sub(17))
         elseif line:find("^SaveData=") ~= nil then
+            print("found savedata in memory")
+            print(line)
             if line:sub(10) == "1" then
                 saveData = true
             else
                 saveData = false
             end
-        elseif line:find("^SaveData=") == nil then
-            saveData = false
         else
+            print("gameinfo:")
+            print(line)
             table.insert(gameInfo, line)
         end
     end
 
+    print("checking if new saveData")
     if not lastSaveData and saveData then
         local oldFile
-
-        local rngFile = io.open("tas_rng.csv", "r")
+        print("new savedata found")
+        local rngFile = io.open("./tas_rng.csv", "r")
         if rngFile ~= nil then
             oldFile = rngFile:read("a")
+            rngFile:close()
         else
             oldFile = ""
         end
 
-        rngFile:close()
-        rngFile = io.open("tas_rng.csv", "w+")
-
+        
+        rngFile = io.open("./tas_rng.csv", "w+")
         local newFile = splitLines(oldFile)
+
+        
         newFile[transitionCount] = "" .. lastScene .. "," .. newScene .. "," .. generatorState[1] .. "," ..
                                        generatorState[2] .. "," .. generatorState[3] .. "," .. generatorState[4]
-        for i = 1,table.getn(newFile) do
+        for i = 1, #newFile do
             rngFile:write(newFile[i], "\n")
         end
     end

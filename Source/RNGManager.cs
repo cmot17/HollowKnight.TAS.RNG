@@ -119,17 +119,17 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
         }
 
         public static void OnPreRender(StringBuilder infoBuilder) {
-            infoBuilder.Append(InfoOut);
-            infoBuilder.Append(LastSceneOut);
-            infoBuilder.Append(NewSceneOut);
-            infoBuilder.Append(GeneratorOut);
-            infoBuilder.Append(TransitionCountOut);
+            infoBuilder.AppendLine(InfoOut);
+            infoBuilder.AppendLine(LastSceneOut);
+            infoBuilder.AppendLine(NewSceneOut);
+            infoBuilder.AppendLine(GeneratorOut);
+            infoBuilder.AppendLine(TransitionCountOut);
             if (SaveData) {
-                infoBuilder.Append("SaveData=1");
+                infoBuilder.AppendLine("SaveData=1");
             } 
             else
             {
-                infoBuilder.Append("SaveData=0");
+                infoBuilder.AppendLine("SaveData=0");
             }
 
             SaveData = false;
