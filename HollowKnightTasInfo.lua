@@ -8,6 +8,9 @@ local markAddresses = {
 
 local lastSaveData = false
 
+local fullpath = debug.getinfo(1,"S").source:sub(2)
+local dirname, filename = fullpath:match('^(.*/)([^/]-)$')
+
 function onPaint()
     local infoAddress = getInfoAddress()
 
@@ -25,6 +28,7 @@ function onPaint()
     local saveData = false
 
     print("in onPaint")
+    
 
     for line in infoText:gmatch("[^\r\n]+") do -- splits up infoText by newline characters (^ matches anything but \r and \n here)
         if line:find("^Enemy=") ~= nil then -- ^ matches to the start of the string here
@@ -69,7 +73,7 @@ function onPaint()
     if not lastSaveData and saveData then
         local oldFile
         print("new savedata found")
-        local rngFile = io.open("./tas_rng.csv", "r")
+        local rngFile = io.open(dirname .. "tas_rng.csv", "r")
         if rngFile ~= nil then
             oldFile = rngFile:read("a")
             rngFile:close()
@@ -78,7 +82,7 @@ function onPaint()
         end
 
         
-        rngFile = io.open("./tas_rng.csv", "w+")
+        rngFile = io.open(dirname .. "tas_rng.csv", "w+")
         local newFile = splitLines(oldFile)
 
         

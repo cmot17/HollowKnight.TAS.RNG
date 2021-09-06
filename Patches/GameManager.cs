@@ -30,7 +30,9 @@ public class patch_GameManager : GameManager {
         if (this.IsMenuScene()) {
             this.SetState(GameState.MAIN_MENU);
         } else if (this.IsGameplayScene()) {
+            Debug.Log("About to call OnRoomTransition");
             RNGManager.OnRoomTransition(this);
+            Debug.Log("OnRoomTransition finished");
             this.SetState(GameState.ENTERING_LEVEL);
             this.playerData.disablePause = false;
             this.inputHandler.AllowPause();
@@ -52,6 +54,7 @@ public class patch_GameManager : GameManager {
                 Debug.LogError("GM: Could not find the UI manager in this scene.");
             }
         }
+        Debug.Log("BeginScene finished");
     }
 
 #if V1028

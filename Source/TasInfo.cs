@@ -69,6 +69,7 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
             CustomInfo.OnInit();
             HitboxInfo.OnInit();
             RngInfo.OnInit();
+            RNGManager.OnInit();
         }
 
         private static void OnPreRender(GameManager gameManager, StringBuilder infoBuilder) {
