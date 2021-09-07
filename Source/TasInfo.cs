@@ -22,6 +22,7 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
 
             StringBuilder infoBuilder = new();
 
+
             try {
                 //DesyncChecker.BeforeUpdate();
                 if (!init) {
@@ -33,6 +34,7 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
 
                 //DesyncChecker.AfterUpdate(infoBuilder);
             } catch (Exception e) {
+                Debug.Log("ONPRERENDER EXCEPTION");
                 Debug.LogException(e);
             }
 

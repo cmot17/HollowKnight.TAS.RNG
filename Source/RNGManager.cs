@@ -63,7 +63,7 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
             InfoOut = $"Room transition: {TransitionNum}";
 
             SavedTransitions.Clear();
-
+            
             if (File.Exists(FilePath)) {
                 string[] fileData = File.ReadAllLines(FilePath);
                 foreach (string line in fileData) {
@@ -76,8 +76,7 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
             Debug.Log($"Savedtransitions count: {SavedTransitions.Count}");
 
             PublicState currentState = Reinterpret(UnityEngine.Random.state);
-            
-            if (SavedTransitions.Count > 0) {
+            if (SavedTransitions.Count >= TransitionNum) {
                 if (SavedTransitions[TransitionNum - 1][0] == LastScene && SavedTransitions[TransitionNum - 1][1] == gameManager.sceneName) {
                     if (SavedTransitions[TransitionNum - 1].Length == 6) {
                         PublicState savedState = new PublicState {
@@ -90,9 +89,9 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
                     }
                 }
             }
-
+            
             Debug.Log("RNG has been set to saved values");
-
+            
             Transitions.Add(new string[] {
                     LastScene,
                     gameManager.sceneName,
@@ -101,14 +100,14 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
                     currentState.s2.ToString(),
                     currentState.s3.ToString()
             });
-
+            
             Debug.Log("Values added to internal list");
-
+            
             LastSceneOut = $"LastScene={LastScene}";
             NewSceneOut = $"NewScene={gameManager.sceneName}";
             GeneratorOut = $"GeneratorState={currentState.s0.ToString()},{currentState.s1.ToString()},{currentState.s2.ToString()},{currentState.s3.ToString()}";
             TransitionCountOut = $"TransitionCount={TransitionNum}";
-
+            
             SaveData = true;
 
             LastScene = gameManager.sceneName;
@@ -119,9 +118,12 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
         public static void OnPreRender(StringBuilder infoBuilder) {
             Debug.Log("OnPreRender called");
             infoBuilder.AppendLine(InfoOut);
+            
             infoBuilder.AppendLine(LastSceneOut);
             infoBuilder.AppendLine(NewSceneOut);
+            
             infoBuilder.AppendLine(GeneratorOut);
+            
             infoBuilder.AppendLine(TransitionCountOut);
             if (SaveData) {
                 infoBuilder.AppendLine("SaveData=1");
@@ -132,6 +134,7 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
             }
 
             SaveData = false;
+            
             Debug.Log("OnPreRender finished");
         }
     }
