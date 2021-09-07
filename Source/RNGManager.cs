@@ -27,15 +27,21 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
         public static string TransitionCountOut = "";
         public static bool SaveData = false;
 
-        public struct PublicState {
+        public readonly struct PublicState {
             [SerializeField]
-            public int s0;
+            public readonly int s0;
             [SerializeField]
-            public int s1;
+            public readonly int s1;
             [SerializeField]
-            public int s2;
+            public readonly int s2;
             [SerializeField]
-            public int s3;
+            public readonly int s3;
+            public PublicState(int s0, int s1, int s2, int s3) {
+                this.s0 = s0;
+                this.s1 = s1;
+                this.s2 = s2;
+                this.s3 = s3;
+            }
         }
 
         public static PublicState Reinterpret(UnityEngine.Random.State st) {
@@ -51,12 +57,12 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
         }
 
         public static void OnInit() {
-            Debug.Log("OnInit Called");
-            Debug.Log(FilePath);
+            //Debug.Log("OnInit Called");
+            //Debug.Log(FilePath);
         }
 
         public static void OnRoomTransition(GameManager gameManager) {
-            Debug.Log("OnRoomTransition called");
+            //Debug.Log("OnRoomTransition called");
 
             TransitionNum += 1;
 
@@ -68,63 +74,56 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
                 string[] fileData = File.ReadAllLines(FilePath);
                 foreach (string line in fileData) {
                     SavedTransitions.Add(line.Split(','));
-                    Debug.Log("Savedtransitions input");
-                    Debug.Log(line);
+                    //Debug.Log("Savedtransitions input");
+                    //Debug.Log(line);
                 }
             }
 
-            Debug.Log($"Savedtransitions count: {SavedTransitions.Count}");
-
-            PublicState currentState = Reinterpret(UnityEngine.Random.state);
             if (SavedTransitions.Count >= TransitionNum) {
                 if (SavedTransitions[TransitionNum - 1][0] == LastScene && SavedTransitions[TransitionNum - 1][1] == gameManager.sceneName) {
                     if (SavedTransitions[TransitionNum - 1].Length == 6) {
-                        long s0 = Convert.ToInt32(SavedTransitions[TransitionNum - 1][2]);
-                        long s1 = Convert.ToInt32(SavedTransitions[TransitionNum - 1][3]);
-                        long s2 = Convert.ToInt32(SavedTransitions[TransitionNum - 1][4]);
-                        long s3 = Convert.ToInt32(SavedTransitions[TransitionNum - 1][5]);
-                        UnityEngine.Random.state = JsonUtility.FromJson<UnityEngine.Random.State>("{\"s0\":" + s0 + ",\"s1\":" + s1 + ",\"s2\":" + s2 + ",\"s3\":" + s3 + "}");
+                        PublicState newState = new PublicState(
+                             Convert.ToInt32(SavedTransitions[TransitionNum - 1][2]),
+                             Convert.ToInt32(SavedTransitions[TransitionNum - 1][3]),
+                             Convert.ToInt32(SavedTransitions[TransitionNum - 1][4]),
+                             Convert.ToInt32(SavedTransitions[TransitionNum - 1][5])
+                        );
+
+                        UnityEngine.Random.state = Reinterpret(newState);
                     }
                 }
             }
+
+            RngInfo.lastState = UnityEngine.Random.state;
+            RngInfo.rollTimes = 0;
+
+            PublicState currentState = Reinterpret(UnityEngine.Random.state);
             
-            Debug.Log("RNG has been set to saved values");
-            
-            Transitions.Add(new string[] {
-                    LastScene,
-                    gameManager.sceneName,
-                    currentState.s0.ToString(),
-                    currentState.s1.ToString(),
-                    currentState.s2.ToString(),
-                    currentState.s3.ToString()
-            });
-            
-            Debug.Log("Values added to internal list");
+            //Debug.Log("Values added to internal list");
             
             LastSceneOut = $"LastScene={LastScene}";
             NewSceneOut = $"NewScene={gameManager.sceneName}";
-            GeneratorOut = $"GeneratorState={currentState.s0.ToString()},{currentState.s1.ToString()},{currentState.s2.ToString()},{currentState.s3.ToString()}";
+            GeneratorOut = $"GeneratorState={currentState.s0},{currentState.s1},{currentState.s2},{currentState.s3}";
             TransitionCountOut = $"TransitionCount={TransitionNum}";
             
             SaveData = true;
 
             LastScene = gameManager.sceneName;
 
-            Debug.Log("Transition info saved to output");
+            //Debug.Log("Transition info saved to output");
         }
 
         public static void OnPreRender(StringBuilder infoBuilder) {
-            Debug.Log("OnPreRender called");
+            //Debug.Log("OnPreRender called");
             infoBuilder.AppendLine(InfoOut);
-            
             infoBuilder.AppendLine(LastSceneOut);
             infoBuilder.AppendLine(NewSceneOut);
-            
             infoBuilder.AppendLine(GeneratorOut);
-            
             infoBuilder.AppendLine(TransitionCountOut);
+
             if (SaveData) {
                 infoBuilder.AppendLine("SaveData=1");
+                
             } 
             else
             {
@@ -132,8 +131,8 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
             }
 
             SaveData = false;
-            
-            Debug.Log("OnPreRender finished");
+
+            //Debug.Log("OnPreRender finished");
         }
     }
 }

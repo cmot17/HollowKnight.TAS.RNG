@@ -5,8 +5,8 @@ using Assembly_CSharp.TasInfo.mm.Source.Utils;
 
 namespace Assembly_CSharp.TasInfo.mm.Source {
     public static class RngInfo {
-        private static ulong rollTimes = 0;
-        private static Random.State lastState;
+        public static ulong rollTimes = 0;
+        public static Random.State lastState;
 
         public static void OnInit() {
             lastState = Random.state;
@@ -16,13 +16,14 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
             Random.State origState = Random.state;
             Random.state = lastState;
             int increaseTimes = 0;
+            //Debug.Log("Pre While Loop");
             while (!origState.Equals(Random.state)) {
                 float _ = Random.value;
                 rollTimes++;
                 increaseTimes++;
             }
             lastState = Random.state;
-
+            //Debug.Log("Post While Loop");
 
             if (ConfigManager.ShowRng) {
                 infoBuilder.AppendLine($"RNG: {rollTimes} +{increaseTimes}");
