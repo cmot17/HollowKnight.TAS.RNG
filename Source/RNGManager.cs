@@ -79,13 +79,11 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
             if (SavedTransitions.Count >= TransitionNum) {
                 if (SavedTransitions[TransitionNum - 1][0] == LastScene && SavedTransitions[TransitionNum - 1][1] == gameManager.sceneName) {
                     if (SavedTransitions[TransitionNum - 1].Length == 6) {
-                        PublicState savedState = new PublicState {
-                            s0 = Convert.ToInt32(SavedTransitions[TransitionNum - 1][2]),
-                            s1 = Convert.ToInt32(SavedTransitions[TransitionNum - 1][3]),
-                            s2 = Convert.ToInt32(SavedTransitions[TransitionNum - 1][4]),
-                            s3 = Convert.ToInt32(SavedTransitions[TransitionNum - 1][5])
-                        };
-                        UnityEngine.Random.state = Reinterpret(savedState);
+                        long s0 = Convert.ToInt32(SavedTransitions[TransitionNum - 1][2]);
+                        long s1 = Convert.ToInt32(SavedTransitions[TransitionNum - 1][3]);
+                        long s2 = Convert.ToInt32(SavedTransitions[TransitionNum - 1][4]);
+                        long s3 = Convert.ToInt32(SavedTransitions[TransitionNum - 1][5]);
+                        UnityEngine.Random.state = JsonUtility.FromJson<UnityEngine.Random.State>("{\"s0\":" + s0 + ",\"s1\":" + s1 + ",\"s2\":" + s2 + ",\"s3\":" + s3 + "}");
                     }
                 }
             }
