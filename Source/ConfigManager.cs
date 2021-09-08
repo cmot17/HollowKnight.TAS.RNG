@@ -14,8 +14,11 @@ ShowKnightInfo = true
 ShowCustomInfo = true
 ShowSceneName = true
 ShowTime = true
-ShowRng = true
+
+ShowRngCalls = true
 ShowRngState = true
+SaveRngFile = 'tas_rng.csv'
+LoadRng = true
 
 ShowEnemyHp = true
 ShowEnemyPosition = true
@@ -26,12 +29,6 @@ ShowOtherHitbox = false
 
 PositionPrecision = 5
 VelocityPrecision = 3
-
-SetRngFrame = -1
-SetRngS0 = 1
-SetRngS1 = 1812433254
-SetRngS2 = 1900727103
-SetRngS3 = -603986212
 
 # 碰撞箱颜色 ARGB 格式，注释或删除则不显示该类 hitbox
 KnightHitbox = 0xFF00FF00
@@ -65,15 +62,17 @@ DisableCameraShake = false
 ";
 
         private static DateTime lastWriteTime;
-        private static readonly Dictionary<string, string> Settings = new();
+        private readonly static Dictionary<string, string> Settings = new();
         public static string CustomInfoTemplate { get; private set; } = string.Empty;
         public static bool Enabled => GetSettingValue<bool>(nameof(Enabled));
         public static bool ShowCustomInfo => Enabled && GetSettingValue<bool>(nameof(ShowCustomInfo));
         public static bool ShowKnightInfo => Enabled && GetSettingValue<bool>(nameof(ShowKnightInfo));
         public static bool ShowSceneName => Enabled && GetSettingValue<bool>(nameof(ShowSceneName));
         public static bool ShowTime => Enabled && GetSettingValue<bool>(nameof(ShowTime));
-        public static bool ShowRng => Enabled && GetSettingValue<bool>(nameof(ShowRng));
+        public static bool ShowRngCalls => Enabled && GetSettingValue<bool>(nameof(ShowRngCalls));
         public static bool ShowRngState => Enabled && GetSettingValue<bool>(nameof(ShowRngState));
+        public static string SaveRngFile => GetSettingValue<string>(nameof(SaveRngFile));
+        public static bool LoadRng => Enabled && GetSettingValue<bool>(nameof(LoadRng));
         public static bool ShowEnemyHp => Enabled && GetSettingValue<bool>(nameof(ShowEnemyHp));
         public static bool ShowEnemyPosition => Enabled && GetSettingValue<bool>(nameof(ShowEnemyPosition));
         public static bool ShowEnemyVelocity => Enabled && GetSettingValue<bool>(nameof(ShowEnemyVelocity));
@@ -81,11 +80,6 @@ DisableCameraShake = false
         public static bool ShowOtherHitbox => Enabled && GetSettingValue<bool>(nameof(ShowOtherHitbox));
         public static int PositionPrecision => GetSettingValue(nameof(PositionPrecision), 5);
         public static int VelocityPrecision => GetSettingValue(nameof(VelocityPrecision), 3);
-        public static long SetRngFrame => GetSettingValue(nameof(SetRngFrame), -1);
-        public static long SetRngS0 => GetSettingValue(nameof(SetRngS0), 1);
-        public static long SetRngS1 => GetSettingValue(nameof(SetRngS1), 1812433254);
-        public static long SetRngS2 => GetSettingValue(nameof(SetRngS2), 1900727103);
-        public static long SetRngS3 => GetSettingValue(nameof(SetRngS3), -603986212);
         public static float CameraZoom => Enabled ? GetSettingValue(nameof(CameraZoom), 1f) : 1f;
         public static bool CameraFollow => Enabled && GetSettingValue<bool>(nameof(CameraFollow));
         public static bool DisableCameraShake => Enabled && GetSettingValue<bool>(nameof(DisableCameraShake));

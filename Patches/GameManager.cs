@@ -31,7 +31,7 @@ public class patch_GameManager : GameManager {
             this.SetState(GameState.MAIN_MENU);
         } else if (this.IsGameplayScene()) {
             //Debug.Log("About to call OnRoomTransition");
-            RNGManager.OnRoomTransition(this);
+            RngManager.OnRoomTransition(this);
             //Debug.Log("OnRoomTransition finished");
             this.SetState(GameState.ENTERING_LEVEL);
             this.playerData.disablePause = false;

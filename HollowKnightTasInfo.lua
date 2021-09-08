@@ -26,8 +26,26 @@ function onPaint()
     local newScene
     local transitionCount
     local saveData = false
+    local savePath = nil
+    local configPath = dirname .. "HollowKnightTasInfo.config"
 
-    print("in onPaint")
+    local configFile = io.open(configPath,"r")
+    if configFile ~= nil then
+        for line in configFile:lines() do
+            i,j = string.find(line,"SaveRngFile = ")
+            if j ~= nil then
+                savePath = string.sub(line,j+1,string.len(line)-1)
+                break
+            end
+        end
+    end
+
+    if savePath == nil then
+        savePath = "tas_rng.csv"
+    end
+
+    --print(savePath)
+    --print("in onPaint")
     
 
     for line in infoText:gmatch("[^\r\n]+") do -- splits up infoText by newline characters (^ matches anything but \r and \n here)
@@ -55,25 +73,25 @@ function onPaint()
         elseif line:find("^TransitionCount=") ~= nil then
             transitionCount = tonumber(line:sub(17))
         elseif line:find("^SaveData=") ~= nil then
-            print("found savedata in memory")
-            print(line)
+            --print("found savedata in memory")
+            --print(line)
             if line:sub(10) == "1" then
                 saveData = true
             else
                 saveData = false
             end
         else
-            print("gameinfo:")
-            print(line)
+            --print("gameinfo:")
+            --print(line)
             table.insert(gameInfo, line)
         end
     end
 
-    print("checking if new saveData")
+    --print("checking if new saveData")
     if not lastSaveData and saveData then
         local oldFile
-        print("new savedata found")
-        local rngFile = io.open(dirname .. "tas_rng.csv", "r")
+        --print("new savedata found")
+        local rngFile = io.open(dirname .. savePath, "r")
         if rngFile ~= nil then
             oldFile = rngFile:read("a")
             rngFile:close()
@@ -82,7 +100,7 @@ function onPaint()
         end
 
         
-        rngFile = io.open(dirname .. "tas_rng.csv", "w+")
+        rngFile = io.open(dirname .. savePath, "w+")
         local newFile = splitLines(oldFile)
 
         

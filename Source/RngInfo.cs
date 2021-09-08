@@ -25,7 +25,7 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
             lastState = Random.state;
             //Debug.Log("Post While Loop");
 
-            if (ConfigManager.ShowRng) {
+            if (ConfigManager.ShowRngCalls) {
                 infoBuilder.AppendLine($"RNG: {rollTimes} +{increaseTimes}");
 
             }
@@ -34,7 +34,7 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
 
             if (ConfigManager.ShowRngState) {
                 //Random.State st = Random.state;
-                RNGManager.PublicState currentState = RNGManager.Reinterpret(Random.state);
+                RngManager.PublicState currentState = RngManager.Reinterpret(Random.state);
                 infoBuilder.AppendLine($"S0: {currentState.s0}");
                 infoBuilder.AppendLine($"S1: {currentState.s1}");
                 infoBuilder.AppendLine($"S2: {currentState.s2}");

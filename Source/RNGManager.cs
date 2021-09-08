@@ -9,12 +9,12 @@ using System.Runtime.CompilerServices;
 
 
 namespace Assembly_CSharp.TasInfo.mm.Source {
-    public static class RNGManager {
+    public static class RngManager {
         public static List<string[]> SavedTransitions = new();
 
-        public static List<string[]> Transitions = new();
+        public static string FilePath;
 
-        public static string FilePath = Path.GetDirectoryName(Application.dataPath) + "/tas_rng.csv";
+
 
         public static int TransitionNum = 0;
 
@@ -62,6 +62,7 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
         }
 
         public static void OnRoomTransition(GameManager gameManager) {
+            
             //Debug.Log("OnRoomTransition called");
 
             TransitionNum += 1;
@@ -81,7 +82,7 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
 
             if (SavedTransitions.Count >= TransitionNum) {
                 if (SavedTransitions[TransitionNum - 1][0] == LastScene && SavedTransitions[TransitionNum - 1][1] == gameManager.sceneName) {
-                    if (SavedTransitions[TransitionNum - 1].Length == 6) {
+                    if (SavedTransitions[TransitionNum - 1].Length == 6 && ConfigManager.LoadRng) {
                         PublicState newState = new PublicState(
                              Convert.ToInt32(SavedTransitions[TransitionNum - 1][2]),
                              Convert.ToInt32(SavedTransitions[TransitionNum - 1][3]),
@@ -90,6 +91,9 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
                         );
 
                         UnityEngine.Random.state = Reinterpret(newState);
+                    } 
+                    else {
+                        SaveData = true;
                     }
                 }
             }
@@ -106,7 +110,7 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
             GeneratorOut = $"GeneratorState={currentState.s0},{currentState.s1},{currentState.s2},{currentState.s3}";
             TransitionCountOut = $"TransitionCount={TransitionNum}";
             
-            SaveData = true;
+                       
 
             LastScene = gameManager.sceneName;
 
@@ -114,6 +118,7 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
         }
 
         public static void OnPreRender(StringBuilder infoBuilder) {
+            FilePath = Path.GetDirectoryName(Application.dataPath) + "/" + ConfigManager.SaveRngFile;
             //Debug.Log("OnPreRender called");
             infoBuilder.AppendLine(InfoOut);
             infoBuilder.AppendLine(LastSceneOut);
