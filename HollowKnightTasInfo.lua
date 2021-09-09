@@ -87,6 +87,7 @@ function onPaint()
         end
     end
 
+    --print(movie.currentFrame())
     --print("checking if new saveData")
     if not lastSaveData and saveData then
         local oldFile

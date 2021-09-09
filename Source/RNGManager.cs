@@ -82,20 +82,25 @@ namespace Assembly_CSharp.TasInfo.mm.Source {
 
             if (SavedTransitions.Count >= TransitionNum) {
                 if (SavedTransitions[TransitionNum - 1][0] == LastScene && SavedTransitions[TransitionNum - 1][1] == gameManager.sceneName) {
-                    if (SavedTransitions[TransitionNum - 1].Length == 6 && ConfigManager.LoadRng) {
-                        PublicState newState = new PublicState(
-                             Convert.ToInt32(SavedTransitions[TransitionNum - 1][2]),
-                             Convert.ToInt32(SavedTransitions[TransitionNum - 1][3]),
-                             Convert.ToInt32(SavedTransitions[TransitionNum - 1][4]),
-                             Convert.ToInt32(SavedTransitions[TransitionNum - 1][5])
-                        );
+                    if (SavedTransitions[TransitionNum - 1].Length == 6) {
+                        if (ConfigManager.LoadRng) {
+                            PublicState newState = new PublicState(
+                                 Convert.ToInt32(SavedTransitions[TransitionNum - 1][2]),
+                                 Convert.ToInt32(SavedTransitions[TransitionNum - 1][3]),
+                                 Convert.ToInt32(SavedTransitions[TransitionNum - 1][4]),
+                                 Convert.ToInt32(SavedTransitions[TransitionNum - 1][5])
+                            );
 
-                        UnityEngine.Random.state = Reinterpret(newState);
-                    } 
+                            UnityEngine.Random.state = Reinterpret(newState);
+                        }
+                    }
                     else {
                         SaveData = true;
                     }
                 }
+            }
+            else {
+                SaveData = true;
             }
 
             RngInfo.lastState = UnityEngine.Random.state;
